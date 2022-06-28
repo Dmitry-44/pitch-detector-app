@@ -1,5 +1,4 @@
 import React, { MouseEvent } from "react"
-import pitchAnalyser from 'pitch-analyser';
 import '../common.css';
 import './upload-field.css';
 
@@ -14,6 +13,13 @@ type uploadFieldStateType = {
 }
 
 class UploadField extends React.Component<uploadFieldPropsType,uploadFieldStateType> {
+
+	constructor (props: uploadFieldPropsType) {
+		super(props)
+		this.dropArea = React.createRef();
+	}
+
+	private dropArea: React.RefObject<HTMLDivElement>
 
 	state: uploadFieldStateType = {
 		audio: null,
@@ -30,22 +36,20 @@ class UploadField extends React.Component<uploadFieldPropsType,uploadFieldStateT
 			if (!input.files?.length) return;
 			if(!input.files?.[0].type.includes('audio')){
 				this.setState({errorText: 'Неверный формат! Выберите файл с расширением .mp3'})
+				this.setState({loadedFileName: ''})
 				return
 			}
 			this.setState({errorText: ''})
-			console.log('input file ', input.files?.[0])
 			let loadedFileName = input.files?.[0].name || '';
 			let loadedFile = input.files?.[0];
 			this.setState({audio: loadedFile})
 			this.setState({loadedFileName: loadedFileName})
-			console.log('loadedFileName', loadedFileName)
 		}
 	}
 	hideStyle = {
 		display: 'none'
 	}
 	playLoadedAudio= () => {
-		console.log('play loaded audio')
 		if(this.state.processing) return;
 		const audio = new Audio();
 		let url=''
@@ -54,49 +58,47 @@ class UploadField extends React.Component<uploadFieldPropsType,uploadFieldStateT
 		}
 		audio.src=url
 		audio.play();
-		const analyser = new pitchAnalyser({
-			returnNote: true,
-			microphone: false,
-			audioFile: true,
-			callback: function(payload: String) {
-				console.log(payload); // E.g. { frequency: 220, note: "A3" }
-			}
-		})
+	}
 
-		analyser.initAnalyser().then(() => {
-			// Start the analyser after initialisation
-			console.log('init analyser')
-			analyser.startAnalyser();
-		});
+	dropDownHandler = (event: React.DragEvent) => {
+		this.allStop(event)
+		if(this.dropArea.current?.classList.contains('drop-active')) {
+			this.dropArea.current?.classList.remove('drop-active')
+		}
+		if (!event.dataTransfer?.files?.length) return;
+		if(!event.dataTransfer?.files?.[0].type.includes('audio')){
+			this.setState({errorText: 'Неверный формат! Выберите файл с расширением .mp3'})
+			return
+		}
+		this.setState({errorText: ''})
+		let loadedFileName = event.dataTransfer.files?.[0].name || '';
+		let loadedFile = event.dataTransfer.files?.[0];
+		this.setState({audio: loadedFile})
+		this.setState({loadedFileName: loadedFileName})
+	}
 
+	dragOverHandler = (e: React.DragEvent) => {
+		this.allStop(e)
+		this.dropArea.current?.classList.add('drop-active')
+	}
 
-		setTimeout(() => {
-			analyser.pauseAnalyser();;
-			console.log('resume')
-		}, 2000)
+	dragLeaveHandler = (e: React.DragEvent) => {
+		this.allStop(e)
+		if(this.dropArea.current?.classList.contains('drop-active')) {
+			this.dropArea.current?.classList.remove('drop-active')
+		}
+	}
 
-		// const audioCtx = new AudioContext();
-		// const analyser = audioCtx.createAnalyser();
-		// console.log('analyser', analyser)
-		// // Float32Array should be the same length as the frequencyBinCount
-		// const myDataArray = new Float32Array(analyser.frequencyBinCount);
-		// console.log('myDataArray', myDataArray)
-		// // fill the Float32Array with data returned from getFloatFrequencyData()
-		// analyser.getFloatFrequencyData(myDataArray);
-		// let fr = analyser.frequencyBinCount
-		// console.log('fr', fr)
-		// console.log('myDataArray after', myDataArray)
-
-		// let compressor = audioCtx.createDynamicsCompressor();
-		// compressor.connect(audioCtx.destination);
-		
+	allStop = (e: React.DragEvent) => {
+		e.preventDefault()
+		e.stopPropagation()
 	}
 
 
 	render() {
 		return (
 			<div className="wrapper">
-				<div className="input_block">
+				<div ref={this.dropArea} className="input_block" onDrop={this.dropDownHandler} onDragLeave={this.dragLeaveHandler} onDragOver={this.dragOverHandler}  >
 					<div className="text">
 						Перетащите файл или <br/>
 						<span className="open-file" onClick={this.onClickHandler}>откройте проводник</span>
