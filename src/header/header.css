@@ -1,0 +1,19 @@
+.header {
+    height: 60px;
+    background-color: #DFE0E2;
+    box-shadow: 0 4px 13px -3px rgb(0 0 0 / 10%);
+}
+.logo {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    max-width: 250px;
+    margin: 0 auto 0 0;
+    color: #000;
+    letter-spacing: 6px;
+    font-weight: 300;
+    transition: all .4s ;
+}
+.logo:hover {
+    transform: scale(1.05);
+}

@@ -1,0 +1,57 @@
+.wrapper {
+    max-width: 900px;
+    margin: 2rem auto;
+}
+.input_block {
+    border-radius: 15px;
+    border: 1px solid #000;
+    width: 500px;
+    min-height: 90px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+.input_block .open-file {
+    cursor: pointer;
+    text-decoration: underline;
+    display: inline-block;
+    margin-top: 7px;
+}
+.input_block .open-file:hover {
+    opacity: .9;
+}
+.button-convert {
+    background-color: azure;
+    width: 300px;
+    height: 60px;
+    border-radius: 8px;
+    outline: none;
+    border: 1px solid #000;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.button-convert:hover {
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+}
+.button-convert:disabled:hover {
+    box-shadow: none;
+    cursor: not-allowed;
+}
+.input_block-error {
+    font-size: 12px;
+}
+.file_name {
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+@media screen and (max-width: 768px) {
+    .input_block {
+        max-width: 500px;
+        min-width: 300px;
+        width: auto;
+    }
+}
