@@ -1,13 +1,8 @@
 import React, { FC } from 'react';
-import logo from './logo.svg';
-import './common.css';
-
-import Header from './header/Header';
 import UploadField from './uploadField/UploadField';
+import './common.css';
+import Header from './header/Header';
 
-interface AppProps {
-  children: any
-}
 
 const App: FC = () => {
 	return (

@@ -34,22 +34,14 @@ class UploadField extends React.Component<uploadFieldPropsType,uploadFieldStateT
 		input.click()
 		input.onchange=()=>{ 
 			if (!input.files?.length) return;
-			if(!input.files?.[0].type.includes('audio')){
-				this.setState({errorText: 'Неверный формат! Выберите файл с расширением .mp3'})
-				this.setState({loadedFileName: ''})
-				return
-			}
-			this.setState({errorText: ''})
-			let loadedFileName = input.files?.[0].name || '';
-			let loadedFile = input.files?.[0];
-			this.setState({audio: loadedFile})
-			this.setState({loadedFileName: loadedFileName})
+			let file = input.files?.[0]
+			this.checkFile(file)
 		}
 	}
 	hideStyle = {
 		display: 'none'
 	}
-	playLoadedAudio= () => {
+	playLoadedAudio = () => {
 		if(this.state.processing) return;
 		const audio = new Audio();
 		let url=''
@@ -66,14 +58,19 @@ class UploadField extends React.Component<uploadFieldPropsType,uploadFieldStateT
 			this.dropArea.current?.classList.remove('drop-active')
 		}
 		if (!event.dataTransfer?.files?.length) return;
-		if(!event.dataTransfer?.files?.[0].type.includes('audio')){
+		let file = event.dataTransfer?.files?.[0]
+		this.checkFile(file)
+	}
+
+	checkFile(file: File) {
+		if(!file.type.includes('audio')){
 			this.setState({errorText: 'Неверный формат! Выберите файл с расширением .mp3'})
+			this.setState({loadedFileName: ''})
 			return
 		}
 		this.setState({errorText: ''})
-		let loadedFileName = event.dataTransfer.files?.[0].name || '';
-		let loadedFile = event.dataTransfer.files?.[0];
-		this.setState({audio: loadedFile})
+		let loadedFileName = file.name || '';
+		this.setState({audio: file})
 		this.setState({loadedFileName: loadedFileName})
 	}
 
@@ -93,7 +90,6 @@ class UploadField extends React.Component<uploadFieldPropsType,uploadFieldStateT
 		e.preventDefault()
 		e.stopPropagation()
 	}
-
 
 	render() {
 		return (
